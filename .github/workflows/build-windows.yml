@@ -5,6 +5,9 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -16,14 +19,21 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install PyInstaller
-        run: pip install pyinstaller
+      - name: Install dependencies
+        run: pip install pyinstaller supabase
 
       - name: Build EXE
-        run: pyinstaller --onefile --windowed --name "TodoApp" --icon NONE todo.py
+        run: pyinstaller --onefile --windowed --name "TodoApp" todo.py
 
-      - name: Upload EXE
-        uses: actions/upload-artifact@v4
+      - name: Create or update latest release
+        uses: softprops/action-gh-release@v2
         with:
-          name: TodoApp-Windows
-          path: dist/TodoApp.exe
+          tag_name: latest
+          name: Latest Build
+          body: |
+            Auto-built from the latest commit on main.
+
+            **Download:** click `TodoApp.exe` below.
+            On first run, Windows may show a SmartScreen warning — click **More info → Run anyway**.
+          files: dist/TodoApp.exe
+          prerelease: false
