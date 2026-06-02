@@ -1,0 +1,7 @@
+todos.json
+todos_cache.json
+.venv/
+build/
+dist/
+*.spec
+__pycache__/
